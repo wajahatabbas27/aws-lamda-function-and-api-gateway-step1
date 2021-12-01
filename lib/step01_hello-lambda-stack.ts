@@ -1,4 +1,7 @@
 import * as cdk from '@aws-cdk/core';
+import * as lambda from '@aws-cdk/aws-lambda';
+import * as apigw from '@aws-cdk/aws-apigateway';
+
 // import * as sqs from '@aws-cdk/aws-sqs';
 
 export class Step01HelloLambdaStack extends cdk.Stack {
@@ -6,10 +9,15 @@ export class Step01HelloLambdaStack extends cdk.Stack {
     super(scope, id, props);
 
     // The code that defines your stack goes here
+    const hello = new lambda.Function(this, "HelloHandler", {
+      runtime: lambda.Runtime.NODEJS_12_X,
+      code: lambda.Code.fromAsset("lambda"),
+      handler: "hello.handler",
+    });
 
-    // example resource
-    // const queue = new sqs.Queue(this, 'Step01HelloLambdaQueue', {
-    //   visibilityTimeout: cdk.Duration.seconds(300)
-    // });
+    new apigw.LambdaRestApi(this, "Endpoint", {
+      handler: hello,
+    });
+
   }
 }
